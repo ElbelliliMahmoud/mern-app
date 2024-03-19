@@ -1,13 +1,35 @@
+const { helpers } = require("../helpers/helpers");
 const { userModel } = require("../models/users.models");
+const { StatusCodes } = require("http-status-codes");
+const bcryptjs = require("bcryptjs");
+const { registerSchema } = require("../lib/validators/auth");
 
 /* Add User */
 const addUser = async (req, res) => {
   try {
+    /* validate register */
+    await registerSchema.validateAsync(req.body);
+
+    /* check user */
+    const existUser = await helpers.checkUser(req.body.email);
+    if (existUser) {
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ message: "user alredy exist" });
+    }
+
+    /* hash password */
+    const hashedPassword = await bcryptjs.hash(req.body.password, 10);
+    if (hashedPassword) {
+      req.body.password = hashedPassword;
+    }
+
     const user = await userModel.create(req.body);
-    res.status(201).send(user);
+    const result = await userModel.findById(user._id).select("-password");
+    res.status(StatusCodes.CREATED).send(result);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "server error" });
+    helpers.genericError(error, res);
   }
 };
 
@@ -15,10 +37,10 @@ const addUser = async (req, res) => {
 const getAllUser = async (req, res) => {
   try {
     const user = await userModel.find();
-    res.status(200).send(user);
+    res.status(StatusCodes.OK).send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "server error" });
+    helpers.genericError(error, res);
   }
 };
 
@@ -26,10 +48,10 @@ const getAllUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const user = await userModel.findByIdAndUpdate(req.params.id, req.body);
-    res.status(200).send(user);
+    res.status(StatusCodes.OK).send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "server error" });
+    helpers.genericError(error, res);
   }
 };
 
@@ -37,10 +59,10 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const user = await userModel.findByIdAndDelete(req.params.id);
-    res.status(200).send(user);
+    res.status(StatusCodes.OK).send(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "server error" });
+    helpers.genericError(error, res);
   }
 };
 

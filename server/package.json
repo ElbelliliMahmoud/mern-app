@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "start:dev": "node --watch --env-file=.env.development ./bin/www",
-    "start:prod": "node  --env-file=.env.development ./bin/www"
+    "start:prod": "node  --env-file=.env.production ./bin/www"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "http-status-code": "^2.1.0",
+    "http-status-codes": "^2.3.0",
+    "joi": "^17.12.2",
     "mongoose": "^8.2.2",
     "morgan": "~1.9.1"
   }

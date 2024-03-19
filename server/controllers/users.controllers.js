@@ -2,13 +2,13 @@ const { helpers } = require("../helpers/helpers");
 const { userModel } = require("../models/users.models");
 const { StatusCodes } = require("http-status-codes");
 const bcryptjs = require("bcryptjs");
-const { registerSchema } = require("../lib/validators/auth");
+const { authSchema } = require("../lib/validators/auth");
 
 /* Add User */
 const addUser = async (req, res) => {
   try {
     /* validate register */
-    await registerSchema.validateAsync(req.body);
+    await authSchema.registerSchema.validateAsync(req.body);
 
     /* check user */
     const existUser = await helpers.checkUser(req.body.email);

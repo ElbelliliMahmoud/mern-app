@@ -7,4 +7,9 @@ const registerSchema = Joi.object({
   repeat_password: Joi.ref("password"),
 }).with("password", "repeat_password");
 
-module.exports.registerSchema = registerSchema;
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+});
+
+module.exports.authSchema = { registerSchema, loginSchema };

@@ -36,7 +36,7 @@ const addUser = async (req, res) => {
 /* Get User */
 const getAllUser = async (req, res) => {
   try {
-    const user = await userModel.find();
+    const user = await userModel.find().select("-password");
     res.status(StatusCodes.OK).send(user);
   } catch (error) {
     console.log(error);
